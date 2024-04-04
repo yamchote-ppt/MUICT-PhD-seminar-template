@@ -1,0 +1,148 @@
+%\documentclass[twocolumn, a4paper,10pt]{extarticle} %two column
+\documentclass[a4paper,11pt]{extarticle}
+%\usepackage{courier}
+\usepackage{blindtext} % Package to generate dummy text throughout this template
+\usepackage{newclude}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage[table,xcdraw]{xcolor}
+\usepackage{xcolor}
+\usepackage{microtype} % Slightly tweak font spacing for aesthetics
+\usepackage[english]{babel} % Language hyphenation and typographical rules
+\usepackage[hmarginratio=1:1,top=25mm,columnsep=20pt, vmarginratio=1:1, left=20mm]{geometry} % Document margins
+\usepackage[hang, small,labelfont=bf,up,textfont=it,up]{caption} % Custom captions under/above floats in tables or figures
+\usepackage{booktabs} % Horizontal rules in tables
+\usepackage{lettrine} % The lettrine is the first enlarged letter at the beginning of the text
+\usepackage{amsmath}
+\usepackage{enumitem} % Customized lists
+\usepackage{abstract} % Allows abstract customization
+\usepackage{fancyhdr} % Headers and footers
+\usepackage{titling} % Customizing the title section
+\usepackage{hyperref} % For hyperlinks in the PDF
+\usepackage[toc]{appendix}
+\usepackage{tocbasic}
+
+\DeclareTOCStyleEntry[
+	beforeskip=.2em plus 1pt,% default is 1em plus 1pt
+	pagenumberformat=\normalfont\small,
+	entryformat=\normalfont\small,
+	linefill=\TOCLineLeaderFill,
+	]{tocline}{section}
+
+\DeclareTOCStyleEntry[
+	indent=2em,
+	beforeskip=.2em plus 1pt,% default is 1em plus 1pt
+	pagenumberformat=\normalfont\small,
+	entryformat=\normalfont\small,
+	linefill=\TOCLineLeaderFill,
+	]{tocline}{subsection}
+
+\linespread{1.15} % Line spacing - Palatino needs more space between lines
+\setlist[itemize]{noitemsep} % Make itemize lists more compact
+\renewcommand{\abstractnamefont}{\normalfont\bfseries} % Set the "Abstract" text to bold
+\renewcommand{\abstracttextfont}{\normalfont\small} % Set the abstract itself to small italic text
+\providecommand{\keywords}[1]
+{
+	\small	
+	\textbf{\textit{Keywords---}} #1
+}
+
+\DeclareMathOperator{\corr}{corr}
+\usepackage{tikz}
+
+%\newtheorem{prop}{Proposition}[section]
+\newtheorem{prop}{Proposition}
+\newtheorem{lem}[prop]{Lemma}
+\newtheorem{cor}[prop]{Corollary}
+\newtheorem{thm}[prop]{Theorem}
+\newtheorem{fact}[prop]{Fact}
+
+
+
+\theoremstyle{definition}
+\newtheorem{defi}[prop]{Definition}
+\newtheorem*{question}{Question}
+\newtheorem*{rem}{Remark}
+\newtheorem*{ex}{Example}
+\newtheorem*{assumption}{Assumption}
+
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+
+%\usepackage{titlesec} % Allows customization of titles
+%\renewcommand\thesection{\Roman{section}} % Roman numerals for the sections
+%\renewcommand\thesubsection{\roman{subsection}} % roman numerals for subsections
+%\titleformat{\section}[block]{\large\scshape\centering}{\thesection.}{1em}{} % Change the look of the section titles
+%\titleformat{\subsection}[block]{\large}{\thesubsection.}{1em}{} % Change the look of the section titles
+
+\pagestyle{fancy} % All pages have headers and footers
+\fancyhead{} % Blank out the default header
+\fancyfoot{} % Blank out the default footer
+\fancyhead[C]{Seminar in Computer Science} % Custom header text
+\fancyfoot[RO,LE]{\thepage} % Custom footer text
+
+\theoremstyle{definition}
+\newtheorem{defn}{Definition}
+
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\setlength{\droptitle}{-4\baselineskip} % Move the title up
+
+\pretitle{\begin{center}\LARGE\bfseries} % Article title formatting
+	\posttitle{\end{center}} % Article title closing formatting
+
+\title{Title Here} % Article title
+
+\author{%
+%	\textsc{John Smith}\thanks{A thank you or further information} \\[1ex] % Your name
+	\textsc{Phaphontee Yamchote} \\
+	\textsc{advisor: Asst. Prof. Thanapon Noraset} \\
+	{\small Faculty of Information and Communication Technology}\\{\small Mahidol University}\\[1ex]
+	 % Your name
+	% \normalsize Faculty of Information and Communication Technology\\Mahidol University \\ % Your institution
+	%\normalsize {phapho} % Your email address
+	%\and % Uncomment if 2 authors are required, duplicate these 4 lines if more
+	%\textsc{Jane Smith}\thanks{Corresponding author} \\[1ex] % Second author's name
+	%\normalsize University of Utah \\ % Second author's institution
+	%\normalsize \href{mailto:jane@smith.com}{jane@smith.com} % Second author's email address
+}
+
+\date{} % Leave empty to omit a date
+\renewcommand{\maketitlehookd}{%
+%	\tableofcontents
+	\begin{abstract}
+		\input{../abstract}
+	\end{abstract}
+	
+	\keywords{Keyword1, Keyword2, Keyword3}
+}
+
+%----------------------------------------------------------------------------------------
+\setcounter{tocdepth}{1}
+\begin{document}
+	\graphicspath{ {figure/} }
+	\maketitle
+	
+	%-------
+	%	ARTICLE CONTENTS
+	%-------
+	
+	\include*{Introduction}
+	%\include*{Objectives}
+%	\include*{Related Works}
+%	\include*{ProblemStatement}
+%	\include*{Methodology}
+%	\include*{Experiment}
+%	\include*{Future}
+	 \include*{References}
+	 
+%	\include*{Appendix}
+
+
+\end{document}

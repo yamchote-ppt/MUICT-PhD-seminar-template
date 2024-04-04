@@ -1,0 +1,151 @@
+\newpage
+\appendix
+\section{Appendix: Preliminaries} \label{appen:prelim}
+
+To provide a foundational understanding, we will briefly explain key concepts related to Graph Neural Networks (GNNs) and attention mechanisms, both of which are integral to the GNN models utilized in this research.
+
+GNNs are a category of neural models specifically designed to operate on graph data structures, where the order of nodes should not influence the computation of predicted values; a property referred to as ``permutation invariance.'' Various approaches exist for implementing GNNs, but one of the most prominent paradigms is based on ``message passing.''
+
+In this context, $\vec{x}_i^{(k-1)} \in \R^d$ represents the node features of node $i$ in layer $(k-1)$, and $\vec{e}_{j,i} \in \R^D$ (optional) represents edge features from node $j$ to node $i$. Message passing can be described through the following equations:
+\begin{align}
+		\vec{x}_{i}^{(k)} &= \gamma^{(k)} \left(\vec{x}_{i}^{(k-1)}, \vec{m}_{i}^{(k-1)}\right)\label{updating}\\
+		\vec{m}_{i}^{(k)} &= \bigoplus_{j\in \mathcal{N}(i)} \phi^{(k)} \left(\vec{x}_{i}^{(k-1)},\vec{x}_{j}^{(k-1)}, \vec{e}_{j,i}\right)\label{message}
+\end{align}
+represents a differentiable, permutation-invariant function, such as summation, averaging, or maximum operation, while $\gamma$ and $\phi$ denote differentiable functions, often implemented as neural networks.
+In Equation \ref{updating}, the model updates node information using both the existing information (from the previous layer) and information shared among neighboring nodes (messages), which is computed as per Equation \ref{message}. The latter equation pertains to the aggregation of messages from neighboring nodes.
+
+There are various types of message passing layer depending on how we define the operations $\bigoplus, \gamma$ and $\phi$.
+For example, graph convolutional network \cite{GCN} is the most simple message passing layer investigated by Kipf and Welling.
+It is defined as (without biased term)
+\begin{equation}
+\vec{x}_i^{(k)} = \sum_{j \in \mathcal{N}(i) \cup \{ i \}} \frac{1}{\sqrt{\deg(i)} \cdot \sqrt{\deg(j)}} \cdot \left( W^{\top} \cdot \vec{x}_j^{(k-1)} \right),
+\end{equation}
+where neighboring node features are first transformed by a weight matrix $W$, normalized by their degree, and finally summed up.
+
+Another type of message passing layer employed in this work is the Transformer Convolution \cite{transformerconv}, which is formulated as:
+\begin{equation}
+	\vec{x}^{\prime}_i = {W}_1 \mathbf{x}_i +\sum_{j \in \mathcal{N}(i)} \alpha_{i,j} {W}_2 \vec{x}_{j},
+\end{equation}
+where the attention coefficients $\alpha_{i,j}$ are computed via multi-head dot product attention:
+\begin{equation}
+\alpha_{i,j} = \textrm{softmax} \left(\frac{({W}_3\vec{x}_i)^{\top} ({W}_4\vec{x}_j)}{\sqrt{d}} \right).\label{attention}
+\end{equation}
+This message passing layer incorporates attention mechanisms to account for the fact that different neighboring nodes should exert different influences during the aggregation of messages. These influences are learned based on the attributes of the source and target nodes, and the strength of this influence is determined by the attention coefficients.
+
+Message passing layers are not the sole focus in GNN models; pooling layers also play a crucial role, particularly in tasks like graph classification. Pooling involves summarizing local information in a graph, such as node embeddings, to derive a global representation of the entire graph. There are various methods for graph pooling, including sum pooling (simply summing all node embeddings to form a global vector) and mean pooling (computing the average), among others.
+
+
+\section{Appendix: Mathematical Proof}\label{proof}
+
+
+\begin{prop}\label{represent_equi}
+	Let $C_1$ and $C_2$ be cluster graphs in $\mathcal{G}(n)$ for $n \in \N$. Then
+	$[C_1]_\sim = [C_2]_\sim$ if and only if $C_1 = C_2$.
+\end{prop}
+\begin{proof}
+	The backward direction is trivial. We need to prove only forward direction.
+	Assume that $[C_1]_\sim = [C_2]_\sim$. That is, $C_1 \sim C_2$.
+	To prove that $C_1 = C_2$, we prove $E(C_1) = E(C_2)$, and by symmetry, we prove only $E(C_1) \subseteq E(C_2)$.
+	
+	To prove that $E(C_1) \subseteq E(C_2)$, let $\{u,v\} \in E(C_1)$ for nodes $u,v \in N_n$. Then $u$ and $v$ are trivially reachable in $C_1$.
+	Since $C_1\sim C_2$, they also are reachable in $C_2$.
+	Since $C_2$ is a cluster graphs, $\{u, v\} \in E(C_2)$.
+	Hence $E(C_1) \subseteq E(C_2)$, and also $E(C_1) = E(C_2)$. Therefore $C_1 = C_2$.
+\end{proof}
+
+\begin{lem} \label{lem1}
+	The set of partition of the set $N_n$, named $P(n)$, one-to-one corresponds to $\mathfrak{G}(n)$
+\end{lem}
+\begin{proof}
+	Observe the function $F:P(n)\to \mathfrak{G}(n)$ defined by for any $\mathfrak{A}\in P(n)$
+	$$
+	F(\mathfrak{A}) = \left[ C(\mathfrak{A}) \right]_\sim
+	$$
+	
+	%	For convenience, let $C_1$ and $C_2$ be cluster graphs
+	%	\begin{align*}
+		%		C_1 &= \{ \{x,y \} : x,y \in A, x\neq y, A\in \mathfrak{A}_1, \text{ and } |A|>1 \}\\
+		%		C_2 &= \{ \{x,y \} : x,y \in A, x\neq y, A\in \mathfrak{A}_2, \text{ and } |A|>1 \}.
+		%	\end{align*}
+	
+	First we show that $F$ is well-defined.
+	Let $\mathfrak{A}_1$ and $\mathfrak{A}_2$ be two partition of $N_n$ such that $\mathfrak{A}_1 = \mathfrak{A}_2$.
+	Since $\mathfrak{A}_1 = \mathfrak{A}_2$, we have $C(\mathfrak{A}_1) = C(\mathfrak{A}_2)$.
+	Then
+	$F(\mathfrak{A}_1) = [C(\mathfrak{A}_1)]_\sim = [C(\mathfrak{A}_2)]_\sim = F(\mathfrak{A}_2).$
+	Hence $F$ is well-defined.
+	
+	Next, we prove injection.
+	Let $\mathfrak{A}_1$ and $\mathfrak{A}_2$ be two partitions of $N_n$ such that
+	%	$F(\mathfrak{A}_1) = F(\mathfrak{A}_2)$. Then $C(\mathfrak{A}_1) = C(\mathfrak{A}_2)$ because $C(\mathfrak{A}_i)$ is a cluster graph.
+	%	Assume to the contrary that
+	$\mathfrak{A}_1\neq\mathfrak{A}_2$.
+	Then, without loss of generality, there must be $A \subseteq N_n$ such that $A \in \mathfrak{A}_1$ but $A \notin \mathfrak{A}_2$.
+	
+	\underline{Case 1}: $|A|=1$. Let say $A = \{a\}$.
+	Since $\{a\} \in \mathfrak{A}_1$ which is a partition, we obtain that $a\notin e$ for all edge $e\in C(\mathfrak{A}_1)$.
+	Since $\{a\} \notin \mathfrak{A}_2$, there must be some $k\in N_n$ such that $a,k \in Y$ for some $Y\in \mathfrak{A}_2$.
+	Then $\{a,k\} \in C(\mathfrak{A}_2)$.
+	Hence $C(\mathfrak{A}_1)\neq C(\mathfrak{A}_2)$ in this case.
+	
+	\underline{Case 2}: Since $A\notin \mathfrak{A}_2$ and $|A|>1$, there are two possible sub-cases as follows:
+	\begin{enumerate}
+		\item There is $a \in N_n\setminus A$ such that $A \cup \{a\}\subseteq B$ for some partition $B \in \mathfrak{A}_2$.
+		\item There are $a, b \in A$ such that $a\neq b$ and they are in different partition in $\mathfrak{A}_2$.
+	\end{enumerate}
+	~~~~~~\underline{Case 2.1}: there is $a \in N_n\setminus A$ such that $A \cup \{a\}\subseteq B$ for some partition $B \in \mathfrak{A}_2$. Let $x,y \in A$. Then $\{x,a\}\notin C(\mathfrak{A}_1)$ but $\{x,a\}\in C(\mathfrak{A}_2)$.
+	Hence $C(\mathfrak{A}_1)\neq C(\mathfrak{A}_2)$ in this case.
+	
+	~~~~~~\underline{Case 2.2}: there are $a, b \in A$ such that $a\neq b$ and they are in different partition in $\mathfrak{A}_2$. Then $\{a,b\}\in C(\mathfrak{A}_1)$ but $\{a,b\}\notin C(\mathfrak{A}_2)$.
+	Hence $C(\mathfrak{A}_1)\neq C(\mathfrak{A}_2)$ in this case.
+	
+	Therefore, by Proposition \ref{represent_equi}, we can conclude that $F(\mathfrak{A}_1) \neq F(\mathfrak{A}_2)$, and hence $F$ is injective.
+	
+	Lastly, surjectivity of $F$ is trivial by considering the partition $\mathfrak{A}$ of sets which is constructed by any cluster graph $C$ and is defined as follows:
+	\begin{center}
+		For any nodes $u,v\in N_n$, they are in the same set in $\mathfrak{A}$ if $\{u,v\} \in E(C)$, and\\
+		if a node $u \in N_n$ is isolated, then $\{ u \} \in \mathfrak{A}$.
+	\end{center}
+	Then $F(\mathfrak{A}) =[C]_\sim $.
+	
+	Therefore $F$ is one-to-one correspondence between $P(n)$ and $\mathfrak{G}(n)$.
+\end{proof}
+
+\begin{lem} \label{lem2}
+	$\mathcal{DM}$ one-to-one corresponds to $P(n)$.
+\end{lem}
+\begin{proof}
+	Observe the function $f:\mathcal{DM}\to P(n)$ defined by
+	$$
+	f\left( \sum_{i=1}^{n} \prod_{j=1}^{m_i} x_{i_j} \right) = \left\{\left\{x_{i_j}\right\}_{j=1}^{m_i}\right\}_{i=1}^n 
+	$$
+	It is obvious that $f$ is well-defined and surjective.\\
+	
+	To prove injectivity, we proceed the proof by induction on $n$.\\
+	For $n=1$, suppose that $f\left( \prod_{j=1}^{m} x_j \right) =f\left( \prod_{j=1}^{m'} y_j \right)  $. Then $\left\{\left\{x_{j}\right\}_{j=1}^{m}\right\} = \left\{\left\{y_{j}\right\}_{j=1}^{m'}\right\}$.
+	Since they are singleton sets, we have that $\left\{x_{j}\right\}_{j=1}^{m} = \left\{y_{j}\right\}_{j=1}^{m'}$.
+	Then $m = m'$, and also 
+	$$\prod_{j=1}^{m} x_j = \prod\left\{x_{j}\right\}_{j=1}^{m} = \prod\left\{y_{j}\right\}_{j=1}^{m'} = \prod_{j=1}^{m'} y_j.$$
+	
+	For $n>1$, we assume the induction hypothesis which is stated as $\sum_{i=1}^{k} \prod_{j=1}^{m_i} x_{i_j} = \sum_{i=1}^{k} \prod_{j=1}^{m_i} y_{i_j}$ provided $f(\sum_{i=1}^{k} \prod_{j=1}^{m_i} x_{i_j}) = f(\sum_{i=1}^{k} \prod_{j=1}^{m_i} y_{i_j})$ for all $k\leq n-1$.
+	Suppose that $f(\sum_{i=1}^{n} \prod_{j=1}^{m_i} x_{i_j}) = f(\sum_{i=1}^{n} \prod_{j=1}^{m_i} y_{i_j})$.
+	Then $\left\{\left\{x_{i_j}\right\}_{j=1}^{m_i}\right\}_{i=1}^n = \left\{\left\{y_{i_j}\right\}_{j=1}^{m_i}\right\}_{i=1}^n$.
+	Thus $\{x_{n_j}\}_{j=1}^{m_n} \in \left\{\left\{y_{i_j}\right\}_{j=1}^{m_i}\right\}_{i=1}^n$. Without loss of generality, let say that $\{x_{n_j}\}_{j=1}^{m_n} = \{y_{n_j}\}_{j=1}^{m_n}$.
+	Thus $\prod_{j=1}^{m_n} x_{n_j} = \prod_{j=1}^{m_n} y_{i_j}$ and also
+	$\left\{\left\{x_{i_j}\right\}_{j=1}^{m_i}\right\}_{i=1}^{n-1} = \left\{\left\{y_{i_j}\right\}_{j=1}^{m_i}\right\}_{i=1}^{n-1}$. By induction hypothesis, we have $\sum_{i=1}^{n-1} \prod_{j=1}^{m_i} x_{i_j} = \sum_{i=1}^{n-1} \prod_{j=1}^{m_i} y_{i_j}$. Thus
+	\begin{align*}
+		\sum_{i=1}^{n} \prod_{j=1}^{m_i} x_{i_j} &= \sum_{i=1}^{n-1} \prod_{j=1}^{m_i} x_{i_j} + \prod_{j=1}^{m_n} x_{n_j}\\
+		&= \sum_{i=1}^{n-1} \prod_{j=1}^{m_i} y_{i_j} + \prod_{j=1}^{m_n} y_{n_j}\\
+		&= \sum_{i=1}^{n} \prod_{j=1}^{m_i} y_{i_j}.
+	\end{align*}
+	
+	Hence $f$ is injective. Therefore, $f$ is one-to-one correspondence between $\mathcal{DM}$ and $P(n)$.
+\end{proof}
+
+From Lemma \ref{lem1} and Lemma \ref{lem2}, we can conclude Theorem \ref{mainThm} stated that:
+$\mathcal{DM}$ one-to-one corresponds to $\mathfrak{G}(n)$. In other words, $\mathcal{DM}$ one-to-one corresponds to the set of feature graph up to connected component.
+
+
+
+
+
